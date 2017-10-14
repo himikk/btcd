@@ -415,3 +415,25 @@ func (c *Client) SubmitBlock(block *btcutil.Block, options *btcjson.SubmitBlockO
 }
 
 // TODO(davec): Implement GetBlockTemplate
+func (c *Client) GetBlockTemplate(req *btcjson.TemplateRequest) (interface{}, error) {
+	cmd := btcjson.NewGetBlockTemplateCmd(req)
+	res, err := c.sendCmdAndWait(cmd)
+	if err != nil {
+		return false, err
+	}
+
+	str, ok := res.([]byte)
+
+	if ok {
+		// Unmarshal result as a getmininginfo result object.
+		var infoResult btcjson.GetBlockTemplateResult
+		err = json.Unmarshal(str, &infoResult)
+		if err != nil {
+			return nil, err
+		}
+		return infoResult, nil
+	} else {
+		return nil, errors.New("invalid value")
+	}
+
+}
