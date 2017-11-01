@@ -4,6 +4,26 @@
 
 package btcjson
 
+import (
+	"errors"
+	"github.com/shopspring/decimal"
+)
+
+type JSONDec decimal.Decimal
+
+func (t JSONDec) MarshalJSON() ([]byte, error) {
+	return []byte("\"" + decimal.Decimal(t).StringFixed(8) + "\""), nil
+}
+
+func (t JSONDec) UnmarshalJSON(b []byte) error {
+	dec, err := decimal.NewFromString(string(b))
+	if err != nil {
+		return errors.New("Incompatible type for JSONDec")
+	}
+	t = JSONDec(dec)
+	return nil
+}
+
 // GetTransactionDetailsResult models the details data from the gettransaction command.
 //
 // This models the "short" version of the ListTransactionsResult type, which
@@ -12,7 +32,7 @@ package btcjson
 type GetTransactionDetailsResult struct {
 	Account           string   `json:"account"`
 	Address           string   `json:"address,omitempty"`
-	Amount            float64  `json:"amount"`
+	Amount            JSONDec  `json:"amount"`
 	Category          string   `json:"category"`
 	InvolvesWatchOnly bool     `json:"involveswatchonly,omitempty"`
 	Fee               *float64 `json:"fee,omitempty"`
@@ -21,8 +41,8 @@ type GetTransactionDetailsResult struct {
 
 // GetTransactionResult models the data from the gettransaction command.
 type GetTransactionResult struct {
-	Amount          float64                       `json:"amount"`
-	Fee             float64                       `json:"fee,omitempty"`
+	Amount          JSONDec                       `json:"amount"`
+	Fee             JSONDec                       `json:"fee,omitempty"`
 	Confirmations   int64                         `json:"confirmations"`
 	BlockHash       string                        `json:"blockhash"`
 	BlockIndex      int64                         `json:"blockindex"`
@@ -41,18 +61,18 @@ type InfoWalletResult struct {
 	Version         int32   `json:"version"`
 	ProtocolVersion int32   `json:"protocolversion"`
 	WalletVersion   int32   `json:"walletversion"`
-	Balance         float64 `json:"balance"`
+	Balance         JSONDec `json:"balance"`
 	Blocks          int32   `json:"blocks"`
 	TimeOffset      int64   `json:"timeoffset"`
 	Connections     int32   `json:"connections"`
 	Proxy           string  `json:"proxy"`
-	Difficulty      float64 `json:"difficulty"`
+	Difficulty      JSONDec `json:"difficulty"`
 	TestNet         bool    `json:"testnet"`
 	KeypoolOldest   int64   `json:"keypoololdest"`
 	KeypoolSize     int32   `json:"keypoolsize"`
 	UnlockedUntil   int64   `json:"unlocked_until"`
-	PaytxFee        float64 `json:"paytxfee"`
-	RelayFee        float64 `json:"relayfee"`
+	PaytxFee        JSONDec `json:"paytxfee"`
+	RelayFee        JSONDec `json:"relayfee"`
 	Errors          string  `json:"errors"`
 }
 
@@ -61,14 +81,14 @@ type ListTransactionsResult struct {
 	Abandoned         bool     `json:"abandoned"`
 	Account           string   `json:"account"`
 	Address           string   `json:"address,omitempty"`
-	Amount            float64  `json:"amount"`
+	Amount            JSONDec  `json:"amount"`
 	BIP125Replaceable string   `json:"bip125-replaceable,omitempty"`
 	BlockHash         string   `json:"blockhash,omitempty"`
 	BlockIndex        *int64   `json:"blockindex,omitempty"`
 	BlockTime         int64    `json:"blocktime,omitempty"`
 	Category          string   `json:"category"`
 	Confirmations     int64    `json:"confirmations"`
-	Fee               *float64 `json:"fee,omitempty"`
+	Fee               *JSONDec `json:"fee,omitempty"`
 	Generated         bool     `json:"generated,omitempty"`
 	InvolvesWatchOnly bool     `json:"involveswatchonly,omitempty"`
 	Time              int64    `json:"time"`
@@ -85,7 +105,7 @@ type ListTransactionsResult struct {
 // command.
 type ListReceivedByAccountResult struct {
 	Account       string  `json:"account"`
-	Amount        float64 `json:"amount"`
+	Amount        JSONDec `json:"amount"`
 	Confirmations uint64  `json:"confirmations"`
 }
 
@@ -94,7 +114,7 @@ type ListReceivedByAccountResult struct {
 type ListReceivedByAddressResult struct {
 	Account           string   `json:"account"`
 	Address           string   `json:"address"`
-	Amount            float64  `json:"amount"`
+	Amount            JSONDec  `json:"amount"`
 	Confirmations     uint64   `json:"confirmations"`
 	TxIDs             []string `json:"txids,omitempty"`
 	InvolvesWatchonly bool     `json:"involvesWatchonly,omitempty"`
@@ -114,7 +134,7 @@ type ListUnspentResult struct {
 	Account       string  `json:"account"`
 	ScriptPubKey  string  `json:"scriptPubKey"`
 	RedeemScript  string  `json:"redeemScript,omitempty"`
-	Amount        float64 `json:"amount"`
+	Amount        JSONDec `json:"amount"`
 	Confirmations int64   `json:"confirmations"`
 	Spendable     bool    `json:"spendable"`
 }
