@@ -15,12 +15,12 @@ func (t JSONDec) MarshalJSON() ([]byte, error) {
 	return []byte("\"" + decimal.Decimal(t).StringFixed(8) + "\""), nil
 }
 
-func (t JSONDec) UnmarshalJSON(b []byte) error {
+func (t *JSONDec) UnmarshalJSON(b []byte) error {
 	dec, err := decimal.NewFromString(string(b))
 	if err != nil {
 		return errors.New("Incompatible type for JSONDec")
 	}
-	t = JSONDec(dec)
+	*t = JSONDec(dec)
 	return nil
 }
 
