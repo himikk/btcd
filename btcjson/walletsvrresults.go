@@ -5,7 +5,6 @@
 package btcjson
 
 import (
-	"errors"
 	. "github.com/icook/portabledec"
 )
 
