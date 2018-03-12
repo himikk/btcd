@@ -5,7 +5,7 @@
 package btcjson
 
 import (
-	. "github.com/icook/portabledec"
+	. "github.com/shopspring/decimal"
 )
 
 // GetTransactionDetailsResult models the details data from the gettransaction command.
