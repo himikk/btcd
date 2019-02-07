@@ -1109,6 +1109,9 @@ type ConnConfig struct {
 	// EnableBCInfoHacks is an option provided to enable compatiblity hacks
 	// when connecting to blockchain.info RPC server
 	EnableBCInfoHacks bool
+
+	// HTTPTimeout configures the timeout of HTTP post behaviour
+	HTTPTimeout time.Time
 }
 
 // newHTTPClient returns a new http client that is configured according to the
@@ -1137,6 +1140,7 @@ func newHTTPClient(config *ConnConfig) (*http.Client, error) {
 	}
 
 	client := http.Client{
+		Timeout: config.HTTPTimeout,
 		Transport: &http.Transport{
 			Proxy:           proxyFunc,
 			TLSClientConfig: tlsConfig,
