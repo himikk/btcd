@@ -1111,7 +1111,7 @@ type ConnConfig struct {
 	EnableBCInfoHacks bool
 
 	// HTTPTimeout configures the timeout of HTTP post behaviour
-	HTTPTimeout time.Time
+	HTTPTimeout time.Duration
 }
 
 // newHTTPClient returns a new http client that is configured according to the
